@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>AmazonPayments Index</title>
+<script type='text/javascript' th:inline="javascript">
+    window.onAmazonLoginReady = function () {
+    	amazon.Login.setClientId(/*[[${amazon.clientId}]]*/ "");
+    };
+</script>
+<script type='text/javascript' src='https://static-fe.payments-amazon.com/OffAmazonPayments/jp/sandbox/lpa/js/Widgets.js'></script>
+
+</head>
+<body>
+	<h1>AmazonPayments Index</h1>
+
+	<p th:text="${amazon.accessKey}">hoge1</p>
+	<p th:text="${amazon.secretKey}">hoge2</p>
+	<p th:text="${amazon.clientId}">hoge3</p>
+
+	<div id="AmazonPayButton"></div>
+
+<script type='text/javascript' th:inline="javascript">
+    var authRequest;
+    OffAmazonPayments.Button("AmazonPayButton", /*[[${amazon.clientId}]]*/ "", {
+        type: "PwA",
+        color: "LightGray",
+        authorization: function () {
+            loginOptions = { scope: "profile postal_code payments:widget payments:shipping_address", popup: true };
+            authRequest = amazon.Login.authorize(loginOptions, "http://localhost:8800/next");
+        },
+        onError: function (error) {
+        	console.log("onErro...%s:%s", error.getErrorCode(), error.getErrorMessage());	
+        }
+    });
+</script>
+</body>
+</html>

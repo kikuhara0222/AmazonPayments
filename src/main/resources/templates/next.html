@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>AmazonPaymentsNext</title>
+
+<script type="text/javascript" th:inline="javascript">
+	window.onAmazonLoginReady = function() {
+		amazon.Login.setClientId(/*[[${amazon.clientId}]]*/ "");
+	};
+</script>
+<script type="text/javascript"
+	src='https://origin-na.ssl-images-amazon.com/images/G/09/EP/offAmazonPayments/sandbox/prod/lpa/js/Widgets.js'></script>
+</head>
+<body>
+
+	<h1>AmazonPaymentsNext</h1>
+
+	<p>ここで配送先住所と支払方法を表示する</p>
+	<div id="addressBookWidgetDiv" style="width: 400px; height: 240px;"></div>
+	<div id="walletWidgetDiv" style="width: 400px; height: 240px;"></div>
+	
+	<div>
+		<form action="/placeOrder" method="POST">
+			<input type="submit" value="確定" />
+			<input id="amazonOrderReferenceId" name="amazonId" type="hidden" value="" />
+		</form>
+	</div>
+
+	<script type="text/javascript" th:inline="javascript">
+		new OffAmazonPayments.Widgets.AddressBook({
+			sellerId : /*[[${amazon.merchantId}]]*/ "",
+			onOrderReferenceCreate : function(orderReference) {
+				orderReferenceId = orderReference.getAmazonOrderReferenceId();
+				document.getElementById('amazonOrderReferenceId').value = orderReferenceId;
+			},
+			onAddressSelect : function() {
+				//ここで住所が選択されたときの処理
+			},
+			design : {
+				designMode : 'responsive'
+			},
+			onError : function(error) {
+				// your error handling code());	
+				console.log("onErro...%s:%s", error.getErrorCode(), error.getErrorMessage());				}
+		}).bind("addressBookWidgetDiv");
+
+		new OffAmazonPayments.Widgets.Wallet({
+			sellerId : /*[[${amazon.merchantId}]]*/ "",
+			onPaymentSelect : function() {
+				//ここで支払方法選択時の処理
+			},
+			design : {
+				designMode : 'responsive'
+			},
+			onError : function(error) {
+				// your error handling code	
+				console.log("onErro...%s:%s", error.getErrorCode(), error.getErrorMessage());	
+			}
+		}).bind("walletWidgetDiv");
+	</script>
+
+</body>
+</html>
